@@ -6,6 +6,7 @@ It has the following endpoints:
 
 * PUT ingredient - adds an ingredient to a bowl
 * DELETE ingredient - deletes an ingredient from a bowl
+* POST bowl - creates a new bowl by name
 * GET bowl - returns bowl by name
 
 # Dependencies
@@ -25,4 +26,15 @@ or compile and then run executable:
 ```
 go build
 ./go_cake_api_mix
+```
+
+# cURL examples:
+## POST bowl
+```
+curl -i -X POST localhost:8000/bowl -H 'Content-Type: application/json' -d '{"Name": "test"}'
+```
+
+## GET bowl
+```
+curl -i -X GET localhost:8000/bowl/test
 ```
