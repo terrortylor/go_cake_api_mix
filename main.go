@@ -12,13 +12,19 @@ type Bowl struct {
   Ingredients []Ingredient
 }
 
+type NewBowl struct {
+  Name     string `json:"name,omitempty"`
+}
+
 type Ingredient struct {
   Name     string `json:"name,omitempty"`
   Quantity string `json:"quantity,omitempty"`
 }
 
-type NewBowl struct {
+type NewIngredient struct {
+  BowlName     string `json:"bowlName,omitempty"`
   Name     string `json:"name,omitempty"`
+  Quantity string `json:"quantity,omitempty"`
 }
 
 type Message struct {
@@ -30,9 +36,37 @@ var bowls = make(map[string]Bowl)
 func main() {
   log.Println("Starting go_cake_api_mix")
   router := mux.NewRouter()
+  router.HandleFunc("/ingredient", PutIngredient).Methods("PUT")
   router.HandleFunc("/bowl", PostBowl).Methods("POST")
   router.HandleFunc("/bowl/{name}", GetBowl).Methods("GET")
   log.Fatal(http.ListenAndServe(":8000", router))
+}
+
+func PutIngredient(rw http.ResponseWriter, req *http.Request) {
+  decoder := json.NewDecoder(req.Body)
+  var t NewIngredient
+  err := decoder.Decode(&t)
+  message := ""
+  if err != nil {
+    rw.WriteHeader(http.StatusInternalServerError)
+    message =  "Couldn't parse form data"
+  } else {
+    if bowl, ok := bowls[t.BowlName]; ok {
+      ingredients := &bowl.Ingredients
+      NewIngredient := Ingredient{Name: t.Name, Quantity: t.Quantity} 
+      *ingredients = append(*ingredients, NewIngredient)
+      // Reassign map item
+      bowls[t.BowlName] = bowl
+      message = "Ingredient added"
+      rw.WriteHeader(http.StatusCreated)
+      json.NewEncoder(rw).Encode(bowl)
+    } else {
+      message = "Bowl not found"
+      rw.WriteHeader(http.StatusInternalServerError)
+      json.NewEncoder(rw).Encode(Message{Message: message})
+    }
+  }
+  log.Println(message)
 }
 
 func PostBowl(rw http.ResponseWriter, req *http.Request) {

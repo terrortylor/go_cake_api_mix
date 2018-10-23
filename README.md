@@ -29,12 +29,17 @@ go build
 ```
 
 # cURL examples:
-## POST bowl
+## POST /bowl
 ```
 curl -i -X POST localhost:8000/bowl -H 'Content-Type: application/json' -d '{"Name": "test"}'
 ```
 
-## GET bowl
+## GET /bowl
 ```
 curl -i -X GET localhost:8000/bowl/test
+```
+
+## PUT /ingredient
+```
+curl -i -X PUT localhost:8000/ingredient -H 'Content-Type: application/json' -d '{"BowlName": "test", "Name": "eggs", "Quantity": "all the fucking eggs"}'
 ```
