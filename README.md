@@ -66,3 +66,15 @@ Kill and remove container:
 ```
 docker kill mix && docker rm mix
 ```
+
+# Harbor
+If you are using harbor then upload:
+Note: remember to login!
+```
+docker login harbour.whateva
+```
+
+```
+docker tag go_cake_api_mix:latest harbour.whateva/cake_factory/go_cake_api_mix:1.0.0
+docker push harbour.whateva/cake_factory/go_cake_api_mix:1.0.0
+```

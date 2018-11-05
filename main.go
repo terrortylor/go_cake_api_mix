@@ -5,6 +5,7 @@ import (
   "log"
   "net/http"
   "github.com/gorilla/mux"
+  "github.com/rs/cors"
 )
 
 type Bowl struct {
@@ -39,10 +40,12 @@ func main() {
   router.HandleFunc("/ingredient", PutIngredient).Methods("PUT")
   router.HandleFunc("/bowl", PostBowl).Methods("POST")
   router.HandleFunc("/bowl/{name}", GetBowl).Methods("GET")
-  log.Fatal(http.ListenAndServe(":8000", router))
+	handler := cors.Default().Handler(router)
+	log.Fatal(http.ListenAndServe(":8000", handler))
 }
 
 func PutIngredient(rw http.ResponseWriter, req *http.Request) {
+  rw.Header().Set("Content-Type", "application/json")
   decoder := json.NewDecoder(req.Body)
   var t NewIngredient
   err := decoder.Decode(&t)
@@ -70,6 +73,7 @@ func PutIngredient(rw http.ResponseWriter, req *http.Request) {
 }
 
 func PostBowl(rw http.ResponseWriter, req *http.Request) {
+  rw.Header().Set("Content-Type", "application/json")
   decoder := json.NewDecoder(req.Body)
   var t NewBowl
   err := decoder.Decode(&t)
@@ -93,6 +97,7 @@ func PostBowl(rw http.ResponseWriter, req *http.Request) {
 }
 
 func GetBowl(rw http.ResponseWriter, r *http.Request) {
+  rw.Header().Set("Content-Type", "application/json")
   bowlName := mux.Vars(r)["name"]
   log.Println("Looking for bowl:", bowlName)
   if bowl, ok := bowls[bowlName]; ok {
